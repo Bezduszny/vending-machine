@@ -296,7 +296,7 @@ class VendingMachine:
             owed_amount=self.customer_balance,
             monetary_inventory=self.monetary_inventory,
         )
-        if config is None:  # not able to return a change
+        if config is None or not config.configuration:  # not able to return a change
             return
 
         self.monetary_inventory.remove_change(config.configuration)
