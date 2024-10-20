@@ -27,7 +27,7 @@ class Denomination:
             return f"{self.value}p"
 
         if self.value % 100 == 0:
-            return f"£{self.value/100}"
+            return f"£{self.value//100}"
         raise NotImplementedError()
 
     def __repr__(self) -> str:
@@ -67,13 +67,18 @@ class MonetaryInventory:
         self.inventory = defaultdict(lambda: 0)
         self.add_cash(initial_inventory)
 
+    def add_monetary_unit(self, denomination: Denomination):
+        if denomination not in self._supported_denominantions:
+            raise ValueError(f"{denomination} is not supported.")
+        self.inventory[denomination] += 1
+
     def add_cash(self, supply: Dict[Denomination, int]):
         for cash in supply.keys():
             if cash not in self._supported_denominantions:
                 raise ValueError(f"{cash} is not supported.")
 
-        for coin in set(self.inventory.keys() | supply.keys()):
-            self.inventory[coin] += supply[coin]
+        for cash, quantity in supply.items():
+            self.inventory[cash] += quantity
 
     def remove_change(self, change: Dict[Denomination, int]):
         for denomination, quantity in change.items():
@@ -82,6 +87,14 @@ class MonetaryInventory:
                     f"Asked to remove {quantity} of {denomination}, but there's only {self.inventory[denomination]} in the inventory."
                 )
             self.inventory[denomination] -= quantity
+
+    @property
+    def available_change(self) -> Dict[Denomination, int]:
+        return {
+            denomination: quantity
+            for denomination, quantity in self.inventory.items()
+            if quantity > 0
+        }
 
     def __repr__(self) -> str:
         return f"MonetaryInventory({self.inventory=})"
@@ -100,6 +113,14 @@ class ChangeConfiguration:
     @property
     def is_exact(self) -> bool:
         return self.owed == 0
+
+    def __repr__(self) -> str:
+        return ", ".join(
+            [
+                str(quantity) + " x " + str(denomination)
+                for denomination, quantity in self.configuration.items()
+            ]
+        )
 
 
 def find_optimal_change(
