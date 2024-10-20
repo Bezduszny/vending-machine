@@ -2,7 +2,7 @@ import logging
 from collections import defaultdict
 from dataclasses import dataclass
 from queue import Queue
-from typing import Dict
+from typing import Dict, Iterable
 
 ProductID = int
 
@@ -28,7 +28,7 @@ class Stock:
     catalogue: Dict[ProductID, ProductInfo]
 
     def __init__(
-        self, catalogue: Dict[ProductID, ProductInfo], *products: Product
+        self, catalogue: Dict[ProductID, ProductInfo], products: Iterable[Product] = []
     ) -> None:
         self.catalogue = catalogue
         self.products = defaultdict(lambda: Queue())

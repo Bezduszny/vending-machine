@@ -10,15 +10,17 @@ class TestVendingMachine:
     def setup_method(self):
         self.machine = VendingMachine(
             Stock(
-                {
+                catalogue={
                     1: ProductInfo("Soda", 210),
                     2: ProductInfo("Water", 100),
                     3: ProductInfo("Ice tea", 195),
                 },
-                Product(1),
-                Product(1),
-                Product(2),
-                Product(3),
+                products=(
+                    Product(1),
+                    Product(1),
+                    Product(2),
+                    Product(3),
+                ),
             ),
             MonetaryInventory({Denomination(100): 5, Denomination(10): 3}),
             DeliverySystem(),
